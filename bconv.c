@@ -1,35 +1,44 @@
+//Atticus Nafziger
+//Assignment 3 - CSCI 304 - Computer Organization Spring 2024
+//
+//A simple base convertion program to switch between hex, octal, and decimal
+//
+
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h> //to exit program
 #include <string.h>
-//global variables
-short val; 
-char mode; 
+
+
+
 
 short get_operand (char mode)// read in numeric value in mode; return value
 {
     short value;
 
     switch (mode) {
-        case 'o':
+        case 'O':
             printf("Enter octal value: ");
             break;
-        case 'h':
+        case 'H':
             printf("Enter hex value: ");
             break;
-        case 'd':
+        case 'D':
+        default:
             printf("Enter decimal value: ");
             break;
     }
     int scanned;
 
-    if (mode == 'h') {//Convert to decimal before doing anything else, makes everything more easy
-        
+    if (mode == 'H') {//Convert to decimal before doing anything else, makes everything more easy
         scanned = scanf("%hx", &value);
-    } else if (mode == 'o') {
+        printf("%hX\n", value);
+    } else if (mode == 'O') {
         scanned = scanf("%ho", &value);
+        printf("%ho\n", value);
     } else {
         scanned = scanf("%hd", &value);
+        printf("%hd\n", value);
     }
     printf("\n");
     return value;
@@ -40,13 +49,13 @@ void print_bases (short val, char mode)// print out base values and str for mode
     printf("****************************************\n");
     char mode_string[10];//extra space in case
     switch(mode){
-        case 'h':
+        case 'H':
             strcpy(mode_string, "Hex");
             break;
-        case 'o':
+        case 'O':
             strcpy(mode_string, "Oct");
             break;
-        case 'd':
+        case 'D':
             strcpy(mode_string, "Dec");
             break;
     }
@@ -82,68 +91,23 @@ char print_menu (void)//// print menu; get option until valid; return option
     printf("\n");
     printf("Option: ");
     scanf(" %s", option);
+    printf("%s\n", option);
     
     if (strlen(option) != 1) {//this checks if the length of the input is longer than 1 so I can automatically get rid of them
         printf("\nInvalid option: %s\n\n", option);
         return print_menu();
     }
 
-    option[0] = tolower(option[0]);
-
-    switch (option[0]) {
-        case 'c':
-
-            printf("\n");
-            int zero = 0;
-            val = zero;
-            print_bases(zero, 'd');
-            return print_menu();
-
-        case 's':
-
-            val = get_operand(mode);
-            print_bases(val, 'd');
-            break;
-
-        case 'q':
-
-            //exit(0);//done
-            break;
-
-        case 'o':
-
-            mode = 'o';
-            printf("Mode: Octal\n\n");
-            print_bases(val, option[0]);
-            break;
-
-        case 'h':
-
-            mode = 'h';
-            printf("Mode: Hexidecimal\n\n");
-            print_bases(val, option[0]);
-            break;
-
-        case 'd':
-
-            mode = 'd';
-            printf("Mode: Decimal\n\n");
-            print_bases(val, option[0]);
-            break;
-
-        default:
-
-            printf("\nInvalid option: %s\n\n", option);
-            return print_menu();
-    }
-
-
+    //option[0] = toupper(option[0]);
     return option[0];
 }
 
 int main(void)
 {   
-    char start_opt = 'd';
+    short val; 
+    char mode; 
+    char option;
+    char start_opt = 'D';
 
     short start_val = 0;
     
@@ -151,13 +115,58 @@ int main(void)
     mode = start_opt;
     printf("\n");
     print_bases(start_val, start_opt);
-    char option;
-    do
-    {
-        option = print_menu();
-    } while (option != 'q');
+    
 
-    //printf("%c\n", option);
-    //printf("Did not exit");
+
+
+do {
+    option = print_menu();
+
+    switch (option) {
+        case 'C':
+        case 'c':
+            printf("\n");
+            int zero = 0;
+            val = zero;
+            print_bases(zero, mode);
+            continue;
+
+        case 'S':
+        case 's':
+            val = get_operand(mode);
+            print_bases(val, mode);
+            break;
+
+        case 'Q':
+        case 'q':
+            break;
+
+        case 'O':
+        case 'o':
+            mode = 'O';
+            printf("Mode: Octal\n\n");
+            print_bases(val, toupper(option));
+            break;
+
+        case 'H':
+        case 'h':
+            mode = 'H';
+            printf("Mode: Hexadecimal\n\n");
+            print_bases(val, toupper(option));
+            break;
+
+        case 'D':
+        case 'd':
+            mode = 'D';
+            printf("Mode: Decimal\n\n");
+            print_bases(val, toupper(option));
+            break;
+
+        default:
+            printf("\nInvalid option: %c\n\n", option);
+            continue;
+        }
+
+    } while (option != 'Q' && option != 'q');
     return(0);
 }
